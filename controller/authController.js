@@ -6,14 +6,25 @@ const jwt = require("jsonwebtoken");
 const maxAge = 3 * 24 * 60 * 60;
 const createToken = (id) => {
   // console.log("this is create token methos",user,user._id)
-  return jwt.sign({id}, "ChatApp2024", { expiresIn: maxAge });
+  return jwt.sign({ id }, "ChatApp2024", { expiresIn: maxAge });
 };
 
 module.exports.signUp = async (req, res) => {
-  console.log("this is body data", req.body);
-  const userData = await User.create(req.body);
-  console.log("this isdab data", userData);
-  res.json(userData);
+  try {
+    console.log("this is body data", req.body);
+
+    const getUser = await User.findOne({ emailId: req.body.emailId });
+
+    if (getUser) {
+      res.status(404).json({ message: "Email Id already exits...! Please login to account" });
+    } else {
+      const userData = await User.create(req.body);
+      console.log("this isdab data", userData);
+      res.json(userData);
+    }
+  } catch (error) {
+    res.status(404).json(error);
+  }
 };
 
 //*****  Todo: - Add check for email and password should not be null */
@@ -32,19 +43,23 @@ module.exports.login = async (req, res) => {
         console.log("this is try login data", userData._id);
 
         const token = createToken(userData);
-        console.log("this is try login data", userData._id,token);
+        console.log("this is try login data", userData._id, token);
 
         res.cookie("jwt", token, { httpOnly: true, maxAge: maxAge * 1000 });
-        res.json({ id: userData._id, name: userData.name,email:userData.emailId,token});
-      }
-      else{
-      res.json("Wrong Password");
-
+        res.json({
+          id: userData._id,
+          name: userData.name,
+          email: userData.emailId,
+          token,
+        });
+      } else {
+        res.status(404).json({message:"Please enter Correct Password"});
       }
     } else {
-      res.json("User not exists please register user");
+      res.status(404).json({message:"User does not exists please register"});
     }
   } catch (error) {
     console.log("this is login error", error);
+    res.status(404).json(error);
   }
 };
