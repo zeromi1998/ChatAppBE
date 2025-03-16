@@ -53,10 +53,10 @@ module.exports.login = async (req, res) => {
           token,
         });
       } else {
-        res.status(404).json({message:"Please enter Correct Password"});
+        res.status(404).json({message:"Incorrect Password"});
       }
     } else {
-      res.status(404).json({message:"User does not exists please register"});
+      res.status(404).json({message:"Incorrect Email"});
     }
   } catch (error) {
     console.log("this is login error", error);
