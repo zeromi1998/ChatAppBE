@@ -12,7 +12,8 @@ const app = express();
 
 const server = http.createServer(app);
 const io = socket(server,{cors: {
-  origin: "http://localhost:5173",  // Allow the React app's URL
+  origi:"https://chat-app-gules-phi.vercel.app/",
+  // origin: "http://localhost:5173",  // Allow the React app's URL
   methods: ["GET", "POST"],
 },
 });
